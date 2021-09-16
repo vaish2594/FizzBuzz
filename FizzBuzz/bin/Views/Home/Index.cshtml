@@ -1,0 +1,71 @@
+﻿
+<div class="jumbotron">
+    <h3><b>Application Description</b></h3>
+    <p class="lead">FizzBuzz is a web application that takes in a collection of input. It performs following checks for each value in the collection -</p>
+    <ol style="font-weight:200">
+        <li>If the value is a multiple of 3 then output the word 'Fizz'.</li>
+        <li>If the value is a multiple of 5 then output the word 'Buzz'.</li>
+        <li>If the value is divisible by both 3 and 5 then output the word 'FizzBuzz'.</li>
+        <li>At the end of the run the program should display each division that was performed.</li>
+    </ol>
+</div>
+
+<div>
+    <p>
+        Enter comma separated input: <input id="inputTxt" type="text" style="width:100%" />
+    </p>
+    <div>
+        <button class="btn btn-primary" onclick="onCalculateClick()">Calculate</button>
+        <button class="btn btn-default" onclick="onClearClick()">Clear</button>
+    </div>      
+    <br />
+    <div id="divOutput" style="display:none;">
+        <h4><b>Output:</b></h4>
+        <span id="spanOutputText" ></span>
+    </div>
+    
+</div>
+
+
+@section scripts {
+    <script type="text/javascript">
+        function onCalculateClick() {
+            var inputValue = document.getElementById("inputTxt").value;
+            if (inputValue == null || inputValue == '') {
+                DisplayOutput();
+                document.getElementById("spanOutputText").innerHTML = "Please enter comma separated input.";
+                return;
+            }
+        
+             $.ajax({
+                url: "@Url.Action("CalculateFizzBuzz", "Home", new { area = "" })",
+                type: "GET",
+                data: { inputValue: inputValue },
+                success: function (data) {
+                     var response = data;
+                    DisplayOutput();
+                    document.getElementById("spanOutputText").innerHTML = response.outputTxt;
+                },
+                error: function (request, status, error) {
+                    var msg = JSON.parse(request.responseText);
+                    DisplayOutput();
+                    document.getElementById("spanOutputText").innerHTML = msg;
+                }
+            });
+        }
+
+        function DisplayOutput() {
+            var display = $("#divOutput").css("display");
+            if (display === "none") {
+                $("#divOutput").css({ "display": "" });
+            }
+        }
+
+        function onClearClick() {
+            var text = document.getElementById("inputTxt");
+            text.value = "";
+            $("#divOutput").css({ "display": "none" });
+        }
+
+    </script>
+ }
